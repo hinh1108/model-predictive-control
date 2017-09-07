@@ -10,7 +10,7 @@ using CppAD::AD;
 using Eigen::VectorXd;
 
 static const size_t N  = 15;
-static const double dt = 0.05;
+static const double dt = 0.04;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -39,7 +39,9 @@ static const size_t a_start     = delta_start + N - 1;
 
 // weights
 static const double delta_weight  = 1.0;
-static const double a_weight      = 10.0;
+static const double a_weight      = 4.0;
+
+// ddelta and da weights scale as a function of reference velocity
 static const double ddelta_weight = pow(ref_v, 2.2);
 static const double da_weight     = ddelta_weight / 10.0;
 
@@ -53,11 +55,12 @@ class FG_eval {
  public:
   VectorXd coeffs;
 
+  typedef CPPAD_TESTVECTOR(AD<double>) ADvector;
+
   explicit FG_eval(VectorXd coeffs) {
     this->coeffs = coeffs;
   }
 
-  typedef CPPAD_TESTVECTOR(AD<double>) ADvector;
   void operator()(ADvector &fg, const ADvector &vars) {
     // store the cost in the first element of `fg`.
     fg[0] = 0;
@@ -77,10 +80,8 @@ class FG_eval {
 
     // cost in proportion to change in control inputs
     for (int t = 0; t < N - 2; ++t) {
-      fg[0] += ddelta_weight * CppAD::pow(
-        vars[delta_start + t + 1] - vars[delta_start + t], 2);
-      fg[0] += da_weight * CppAD::pow(
-        vars[a_start + t + 1] - vars[a_start + t], 2);
+      fg[0] += ddelta_weight * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+      fg[0] += da_weight * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
     }
 
     // Initial constraints
@@ -114,8 +115,7 @@ class FG_eval {
       AD<double> delta0 = vars[delta_start + t0];
       AD<double> a0     = vars[a_start + t0];
 
-      // Calculate the fit path and
-      // its derivative at position x0
+      // Calculate the fit path and its derivative at position x0
       AD<double> f0 = 0.0;
       AD<double> df0 = 0.0;
       for (int i = 0; i < coeffs.size(); ++i) {
@@ -128,14 +128,15 @@ class FG_eval {
       }
 
       // Derivative of the fit path at x0
-      AD<double> psides0 = CppAD::atan(df0);
+      AD<double> psi_des0 = CppAD::atan(df0);
 
+      // motion model
       fg[1 + x_start + t1]    = x1 - (x0 + v0 * CppAD::cos(psi0) * dt);
       fg[1 + y_start + t1]    = y1 - (y0 + v0 * CppAD::sin(psi0) * dt);
       fg[1 + psi_start + t1]  = psi1 - (psi0 + v0 * delta0 / Lf * dt);
       fg[1 + v_start + t1]    = v1 - (v0 + a0 * dt);
       fg[1 + cte_start + t1]  = cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
-      fg[1 + epsi_start + t1] = epsi1 - ((psi0 - psides0) + v0 * delta0 / Lf * dt);
+      fg[1 + epsi_start + t1] = epsi1 - ((psi0 - psi_des0) + v0 * delta0 / Lf * dt);
     }
   }
 };

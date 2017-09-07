@@ -19,7 +19,7 @@ constexpr double pi() { return M_PI; }
 double deg2rad(double x) { return x * pi() / 180; }
 double rad2deg(double x) { return x * 180 / pi(); }
 
-const double Lf = 2.67;
+static const double Lf = 2.67;
 
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
@@ -98,9 +98,7 @@ int main() {
           const double v = j[1]["speed"];
           const double delta = j[1]["steering_angle"];
           const double accel = j[1]["throttle"];
-
           const size_t n_points = ptsx.size();
-          const double dt = 0.1;
 
           VectorXd waypoints_x(n_points);
           VectorXd waypoints_y(n_points);
@@ -129,12 +127,13 @@ int main() {
           const double cte  = coeffs[0];         // cross track error
           const double epsi = -atan(coeffs[1]);  // orientation error
 
-          // predict vehicle expected state at current time + delay dt
-          const double px_pred   = v * dt;
+          // predict vehicle expected state at current time + latency
+          const double latency = 0.1;
+          const double px_pred   = v * latency;
           const double py_pred   = 0;
-          const double psi_pred  = -v * delta * dt / Lf;
-          const double v_pred    = v + accel * dt;
-          const double cte_pred  = cte + v * sin(epsi) * dt;
+          const double psi_pred  = -v * delta * latency / Lf;
+          const double v_pred    = v + accel * latency;
+          const double cte_pred  = cte + v * sin(epsi) * latency;
           const double epsi_pred = epsi + psi_pred;
 
           VectorXd state(6);
@@ -153,7 +152,7 @@ int main() {
 
           json msgJson;
           msgJson["steering_angle"] = -steer_value;
-          msgJson["throttle"]       = throttle_value;
+          msgJson["throttle"]       =  throttle_value;
 
           // Display the MPC predicted trajectory
           vector<double> mpc_x_vals;
