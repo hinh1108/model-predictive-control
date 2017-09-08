@@ -47,6 +47,6 @@ In main.cpp lines 111-123, I transformed the given waypoints to the vehicle's lo
 
 In a real vehicle, there is typically a delay between the time we issue control outputs and when the car actually responds. This is simulated by adding a 100ms sleep between actuations. In order to deal with this latency, I augmented the predicted state at time t by predicting the position and orientation of the car an additional 100ms into the future. You can see this implemented in main.cpp on lines 139-146.
 
-[![Model Predictive Control](./assets/lake_track_curve.jpg)](https://youtu.be/S--bxds69Zs)
+You can watch a video of the model in action by clicking the image below. Note that due to the additional burden placed on my CPU as I recorded video while running the simulator, I had to lower the reference velocity somewhat, or else the vehicle would go flying off the road.
 
-*Click the image to watch a video of the model in action.*
+[![Model Predictive Control](./assets/lake_track_curve.jpg)](https://youtu.be/S--bxds69Zs)
