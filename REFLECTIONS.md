@@ -29,11 +29,9 @@ Additionally, we want to model the expected error (the difference between the id
 cte[t+1]     = f(x[t]) - y[t] + (v[t] * sin(psi_err[t]) * dt)
 psi_err[t+1] = psi[t] - desired_psi[t] + (v[t]/Lf * delta[t] * dt)
 ```
-The following terms are new:
 
-- `f(x)` is the `y` value of the ideal trajectory at a given `x`, where `f` calculates a polynomial that fits the waypoints of the trajectory. Subtracting `y[t]` from this gives us the current cross track error
-- `psi_err` is the orientation error
-- `desired_psi` is the tangential angle of the polynomial `f` evaluated at `x[t]`, which can be calculated as `arctan(f'(x[t]))`. `f'(x)` is the derivative of the polynomial. Calculating this value gives us the desired orientation if the vehicle followed the ideal trajectory. Therefore, subtracting `desired_psi` from `psi` gives us the orientation error.
+- `f(x)` is the `y` value of the ideal trajectory at a given `x`, where `f` calculates a polynomial that fits the waypoints of the trajectory. Subtracting `y[t]` from this gives us the current cross track error `cte`.
+- `desired_psi` is the tangential angle of the polynomial function `f(x)` evaluated at `x[t]`, which can be calculated as `arctan(f'(x[t]))`. `f'(x)` is the derivative of the polynomial. Calculating this value gives us the desired orientation if the vehicle followed the ideal trajectory. Therefore, subtracting `desired_psi` from `psi` gives us the orientation error `psi_err`.
 
 ## Timestep Length and Elapsed Duration
 
