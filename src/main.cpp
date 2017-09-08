@@ -124,14 +124,14 @@ int main() {
 
           // fit curve (2nd degree polynomial) to transformed waypoints
           VectorXd coeffs = polyfit(waypoints_x, waypoints_y, 2);
-          const double cte  = coeffs[0];         // cross track error
-          const double epsi = -atan(coeffs[1]);  // orientation error
+          const double cte  = polyeval(coeffs, 0);  // cross track error
+          const double epsi = -atan(coeffs[1]);     // orientation error
 
-          // predict vehicle expected state at current time + latency
+          // predict vehicle expected state (in local coords) at current time + latency
           const double latency = 0.1;
           const double px_pred   = v * latency;
           const double py_pred   = 0;
-          const double psi_pred  = -v * delta * latency / Lf;
+          const double psi_pred  = -v / Lf * delta * latency;
           const double v_pred    = v + accel * latency;
           const double cte_pred  = cte + v * sin(epsi) * latency;
           const double epsi_pred = epsi + psi_pred;

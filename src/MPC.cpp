@@ -100,7 +100,6 @@ class FG_eval {
       AD<double> y0    = vars[y_start + t0];
       AD<double> psi0  = vars[psi_start + t0];
       AD<double> v0    = vars[v_start + t0];
-      AD<double> cte0  = vars[cte_start + t0];
       AD<double> epsi0 = vars[epsi_start + t0];
 
       // The state at time t + 1
@@ -135,8 +134,8 @@ class FG_eval {
       fg[1 + y_start + t1]    = y1 - (y0 + v0 * CppAD::sin(psi0) * dt);
       fg[1 + psi_start + t1]  = psi1 - (psi0 + v0 * delta0 / Lf * dt);
       fg[1 + v_start + t1]    = v1 - (v0 + a0 * dt);
-      fg[1 + cte_start + t1]  = cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
-      fg[1 + epsi_start + t1] = epsi1 - ((psi0 - psi_des0) + v0 * delta0 / Lf * dt);
+      fg[1 + cte_start + t1]  = cte1 - (f0 - y0 + v0 * CppAD::sin(epsi0) * dt);
+      fg[1 + epsi_start + t1] = epsi1 - (psi0 - psi_des0 + v0 * delta0 / Lf * dt);
     }
   }
 };
