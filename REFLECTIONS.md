@@ -15,7 +15,7 @@ v[t+1]   = v[t] + a[t] * dt
 
 These expressions describe what we expect the position, orientation and speed of our vehicle to be in the future, given their current values.
 
-- `t` is the current timestep and t+1 is the predicted next timestep
+- `t` is the current timestep and `t+1` is the predicted next timestep
 - `dt` is the difference between timesteps
 - `x` and `y` are the coordinates of the vehicle
 - `psi` is the vehicle orientation
@@ -41,11 +41,11 @@ For this project, we are only given a small portion of the path the car is meant
 
 ## Polynomial Fitting and MPC Preprocessing
 
-In main.cpp lines 111-123, I transformed the given waypoints to the vehicle's local coordinate system and fit a second degree polynomial to give a good approximation of the expected trajectory. Initially, I started by fitting a third degree polynomial to the waypoints, but as I increased the speed of the vehicle, this sometimes resulted erratic calculations, occasionally throwing the vehicle off the road in very dramatic fashion. Using a second degree polynomial still provided a good approximation of the trajectory, as we are only looking 0.6 seconds ahead and the path is never so complex as to need a higher order polynomial. This proved far more stable, enabling me to turn up the velocity without a lot of additional tweaking to the model.
+In [main.cpp lines 111-123](https://github.com/liamondrop/model-predictive-control/blob/master/src/main.cpp#L111-L123), I transformed the given waypoints to the vehicle's local coordinate system and fit a second degree polynomial to give a good approximation of the expected trajectory. Initially, I started by fitting a third degree polynomial to the waypoints, but as I increased the speed of the vehicle, this sometimes resulted erratic calculations, occasionally throwing the vehicle off the road in very dramatic fashion. Using a second degree polynomial still provided a good approximation of the trajectory, as we are only looking 0.6 seconds ahead and the path is never so complex as to need a higher order polynomial. This proved far more stable, enabling me to turn up the velocity without a lot of additional tweaking to the model.
 
 ## Model Predictive Control with Latency
 
-In a real vehicle, there is typically a delay between the time we issue control outputs and when the car actually responds. This is simulated by adding a 100ms sleep between actuations. In order to deal with this latency, I augmented the predicted state at time t by predicting the position and orientation of the car an additional 100ms into the future. You can see this implemented in main.cpp on lines 139-146.
+In a real vehicle, there is typically a delay between the time we issue control outputs and when the car actually responds. This is simulated by adding a 100ms sleep between actuations. In order to deal with this latency, I augmented the predicted state at time t by predicting the position and orientation of the car an additional 100ms into the future. You can see this implemented in [main.cpp on lines 139-146](https://github.com/liamondrop/model-predictive-control/blob/master/src/main.cpp#L139-L146).
 
 You can watch a video of the model in action by clicking the image below. Note that due to the additional burden placed on my CPU as I recorded video while running the simulator, I had to lower the reference velocity somewhat, or else the vehicle would go flying off the road.
 
