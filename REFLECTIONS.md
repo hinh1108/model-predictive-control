@@ -13,7 +13,7 @@ psi[t+1] = psi[t] + v[t]/Lf * delta[t] * dt
 v[t+1]   = v[t] + a[t] * dt
 ```
 
-These expressions describe what we expect the future position, orientation and speed of our vehicle to be in the future, given their current values.
+These expressions describe what we expect the position, orientation and speed of our vehicle to be in the future, given their current values.
 
 - `t` is the current timestep and t+1 is the predicted next timestep
 - `dt` is the difference between timesteps
