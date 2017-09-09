@@ -57,9 +57,7 @@ class FG_eval {
 
   typedef CPPAD_TESTVECTOR(AD<double>) ADvector;
 
-  explicit FG_eval(VectorXd coeffs) {
-    this->coeffs = coeffs;
-  }
+  explicit FG_eval(VectorXd coeffs) : coeffs(coeffs) {}
 
   void operator()(ADvector &fg, const ADvector &vars) {
     // store the cost in the first element of `fg`.
@@ -148,6 +146,7 @@ MPC::~MPC() {}
 
 vector<double> MPC::solve(VectorXd state, VectorXd coeffs) {
   bool ok = true;
+
   typedef CPPAD_TESTVECTOR(double) Dvector;
 
   double x    = state[0];
